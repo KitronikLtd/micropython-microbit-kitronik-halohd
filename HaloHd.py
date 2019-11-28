@@ -160,6 +160,8 @@ class KitronikMic:
             sleep(200)
         return averageSoundLevel
 
+zip_halo_display = neopixel.NeoPixel(pin8, LEDS_ON_HALO)
+
 while True:
     if init is False:
         mic = KitronikMic
@@ -171,7 +173,6 @@ while True:
         setAlarm = False
         init = True
 
-    zip_halo_display = neopixel.NeoPixel(pin8, LEDS_ON_HALO)
     hours = rtc.readTime(rtc, "hours")
     minutes = rtc.readTime(rtc, "minutes")
     seconds = rtc.readTime(rtc, "seconds")
@@ -179,6 +180,7 @@ while True:
         zipHours = hours - 12
     zipHours = zipHours * 5
 
+    zip_halo_display.clear()
     zip_halo_display[zipHours] = (255, 0, 0)
     zip_halo_display[minutes] = (0, 255, 0)
     zip_halo_display[seconds] = (0, 0, 255)
