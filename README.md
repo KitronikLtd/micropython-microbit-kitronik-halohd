@@ -1,9 +1,10 @@
+# OUTDATED README. Update pending. Use with caution
 # micropython-microbit-kitronik-halohd
 Example micro python (for BBC micro:bit) code for the Kitronik :VIEW Halo HD ( www.kitronik.co.uk/5672 )
 
 ## MEMS Mic:
 
-The example code uses the microphone feature.  The microphone is stored within a class.  The sound level reads analog P0.
+Example code for the microphone feature.  The microphone is stored within a class.  The sound level reads analog P0.
 ```blocks
 mic = KitronikMic
 soundlevel = mic.readMicrophoneLevel(mic)
