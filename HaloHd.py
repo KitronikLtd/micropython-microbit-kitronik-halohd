@@ -1,49 +1,26 @@
-# A simple clock for the Halo HD. 
-# To Set the time 
-
-
 from microbit import button_a
 from microbit import button_b
 from microbit import display
 from microbit import i2c
-from microbit import Image
-from microbit import pin0
-from microbit import pin8
-from microbit import pin14
-from microbit import pin19
-from microbit import pin20
-import time
-import neopixel
-
-
+from microbit import pin0 #mic input
+from microbit import pin8 #ZIP LEDs
+from microbit import pin14 #buzzer
+from microbit import pin19 #I2C
+from microbit import pin20 #I2C
+from neopixel import NeoPixel
+from time import sleep
+from music import play,stop,BA_DING
+import gc
 # Declare constants
 LEDS_ON_HALO = 60
 #SOUND_LEVEL_BASE is the average voltage level of the microphone at 1.65V converted to bytes
 SOUND_LEVEL_BASE = 530
-# some images for a pandulum animation
-PendulumLeft =   Image("00900:"
-                       "09000:"
-                       "99000:"
-                       "99000:"
-                       "00000")
-PendulumRight =  Image("00900:"
-                       "00090:"
-                       "00099:"
-                       "00099:"
-                       "00000")
-PendulumCentre = Image("00900:"
-                       "00900:"
-                       "00900:"
-                       "099900:"
-                       "00900")
+#globals for the alarm function
+alarmHour =0
+alarmMinute = 0
+setAlarm = False
 
-
-
-
-
-
-
-
+#A Class to handle the copmletixies of the I2C connected RTC chip
 class KitronikRTC:
     CHIP_ADDRESS = 0x6F
     RTC_SECONDS_REG = 0x00
@@ -133,8 +110,8 @@ class KitronikRTC:
         return self.currentHours
 #end of class KitronikRTC
 
-# a procedure to allow the user to set the time
-def userSetTime():
+#Because of space constraints due to micro python a common interface for the settign of a time
+def timeSetInterface():
     setHrs = 0
     setMns = 0
     AM = True
@@ -183,16 +160,31 @@ def userSetTime():
             
     if(AM == False):
         setHrs += 12
-    #done hours, done mins, poke the rtc with the new values.
-    rtc.setTime(rtc,setHrs, setMns, 0)
+    return (setHrs,setMns)
 
+# a procedure to allow the user to set the time
+def userSetTime():
+    requestedTime = timeSetInterface()
+    #done hours, done mins, poke the rtc with the new values.
+    rtc.setTime(rtc,requestedTime[0], requestedTime[1], 0)
+
+# a procedure to allow the user to set an alarm
+def userSetAlarm():
+    global alarmHour
+    global alarmMinute
+    global setAlarm
+    requestedTime = timeSetInterface()
+    alarmHour = requestedTime[0]
+    alarmMinute = requestedTime[1]
+    setAlarm = True
+    #done - The main loop checks the time to see if we should alarm
 
 #Program Starts Here
 #The ZIP LEDS
-zip_halo_display = neopixel.NeoPixel(pin8, LEDS_ON_HALO)
+zip_halo_display = NeoPixel(pin8, LEDS_ON_HALO)
 #a class for the RTC chip on the Halo HD
 rtc = KitronikRTC
-
+gc.collect #cleanup the memory so we can actually run
 while True:
     #get the values from the RTC
     rtc.readValue(rtc)
@@ -212,16 +204,22 @@ while True:
     zip_halo_display[minutes] = (0, 255, 0)
     zip_halo_display[seconds] = (0, 0, 255)
     zip_halo_display.show()
-    #aminate a pendulum to fill the time, helps to stop the LEDS flickering
-    display.show(PendulumLeft)
-    time.sleep(0.250)
-    display.show(PendulumCentre)
-    time.sleep(0.250)
-    display.show(PendulumRight)
-    time.sleep(0.250)
-    display.show(PendulumCentre)
-    time.sleep(0.100)
+    
+
     #watch out for a user interaction
     if button_a.was_pressed():
         userSetTime()
-    
+    if button_b.was_pressed():
+        userSetAlarm()
+    if setAlarm == True:
+        display.show("A") #indicate to the user there is an alarm set
+        if alarmHour == hours:
+            if alarmMinute == minutes:
+                soundlevel = 0
+                while soundlevel < (SOUND_LEVEL_BASE + 5):
+                    soundlevel = pin0.read_analog()
+                    play(BA_DING, pin14, True, False)
+                setAlarm = False
+                display.clear()
+                stop(pin14) #the music
+#end of program
