@@ -20,7 +20,7 @@ alarmHour =0
 alarmMinute = 0
 setAlarm = False
 
-#A Class to handle the copmletixies of the I2C connected RTC chip
+#A Class to handle the complexities of the I2C connected RTC chip
 class KitronikRTC:
     CHIP_ADDRESS = 0x6F
     RTC_SECONDS_REG = 0x00
@@ -110,7 +110,7 @@ class KitronikRTC:
         return self.currentHours
 #end of class KitronikRTC
 
-#Because of space constraints due to micro python a common interface for the settign of a time
+#Because of space constraints due to micro python a common interface for the setting of a time
 def timeSetInterface():
     setHrs = 0
     setMns = 0
@@ -121,7 +121,7 @@ def timeSetInterface():
     zip_halo_display[5*setHrs] = (255,0,0)
     zip_halo_display.show()
     #because the ui is limited we will have to set the hours and mins seperately.
-    #Pressing A increments the value, B enters it an moves on 
+    #Pressing A increments the value, B enters it and moves on 
     # set the time in Hours, Minutes, and then AM/PM
     display.scroll("A to Adjust, B to Enter")
     while (not (button_b.was_pressed())):
