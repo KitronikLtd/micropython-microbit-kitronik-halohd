@@ -47,7 +47,7 @@ music.play(music.BA_DING, pin14, True, False)
 
 ```
 
-## ZIP LED's
+## ZIP LEDs
 The Halo HD has 60 Zip LED's, these are compatible with the standard neopixel package.
 ```blocks
 
