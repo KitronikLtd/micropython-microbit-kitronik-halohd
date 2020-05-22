@@ -166,7 +166,7 @@ def timeSetInterface():
 def userSetTime():
     requestedTime = timeSetInterface()
     #done hours, done mins, poke the rtc with the new values.
-    rtc.setTime(rtc,requestedTime[0], requestedTime[1], 0)
+    rtc.setTime(requestedTime[0], requestedTime[1], 0)
 
 # a procedure to allow the user to set an alarm
 def userSetAlarm():
@@ -183,14 +183,14 @@ def userSetAlarm():
 #The ZIP LEDS
 zip_halo_display = NeoPixel(pin8, LEDS_ON_HALO)
 #a class for the RTC chip on the Halo HD
-rtc = KitronikRTC
+rtc = KitronikRTC()
 gc.collect #cleanup the memory so we can actually run
 while True:
     #get the values from the RTC
-    rtc.readValue(rtc)
-    hours = rtc.readHrs(rtc)
-    minutes = rtc.readMin(rtc)
-    seconds = rtc.readSec(rtc)
+    rtc.readValue()
+    hours = rtc.readHrs()
+    minutes = rtc.readMin()
+    seconds = rtc.readSec()
     #we can only display 12 hours, so if the 24hr clock reports PM then convert
     if hours > 11:
         zipHours = hours - 12
