@@ -75,7 +75,7 @@ class KitronikRTC:
         readBuf = i2c.read(self.CHIP_ADDRESS, 7, False)
         self.currentSeconds = (((readBuf[0] & 0x70) >> 4) * 10) + (readBuf[0] & 0x0F)
         self.currentMinutes = (((readBuf[1] & 0x70) >> 4) * 10) + (readBuf[1] & 0x0F)
-        self.currentHours = (((readBuf[2] & 0x10) >> 4) * 10) + (readBuf[2] & 0x0F)
+        self.currentHours = (((readBuf[2] & 0x30) >> 4) * 10) + (readBuf[2] & 0x0F)
         self.currentWeekDay = readBuf[3]
         self.currentDay = (((readBuf[4] & 0x30) >> 4) * 10) + (readBuf[4] & 0x0F)
         self.currentMonth =(((readBuf[5] & 0x10) >> 4) * 10) + (readBuf[5] & 0x0F) 
